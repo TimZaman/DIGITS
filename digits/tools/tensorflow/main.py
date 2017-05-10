@@ -501,14 +501,14 @@ def main(_):
         if FLAGS.save_vars == 'all':
             vars_to_save = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
         elif FLAGS.save_vars == 'trainable':
-            vars_to_save = tf.all_variables()
+            vars_to_save = tf.global_variables()
         else:
             logging.error('Unknown save_var flag (%s)' % FLAGS.save_vars)
             exit(-1)
         saver = tf.train.Saver(vars_to_save, max_to_keep=0, sharded=FLAGS.serving_export)
 
         # Initialize variables
-        init_op = tf.group(tf.initialize_all_variables(), tf.initialize_local_variables())
+        init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
         sess.run(init_op)
 
         # If weights option is set, preload weights from existing models appropriately
@@ -516,7 +516,7 @@ def main(_):
             load_snapshot(sess, FLAGS.weights, tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES))
 
         # Tensorboard: Merge all the summaries and write them out
-        writer = tf.train.SummaryWriter(os.path.join(FLAGS.summaries_dir, 'tb'), sess.graph)
+        writer = tf.summary.FileWriter(os.path.join(FLAGS.summaries_dir, 'tb'), sess.graph)
 
         # If we are inferencing, only do that.
         if FLAGS.inference_db:

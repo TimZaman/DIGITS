@@ -3,7 +3,7 @@ def build_model(params):
     #tf.image_summary(_x.op.name, _x, max_images=10, collections=[digits.GraphKeys.SUMMARIES_TRAIN])
 
     # Split out the channel in two
-    lhs, rhs = tf.split(0, 2, _x, name='split_batch')
+    lhs, rhs = tf.split(axis=0, num_or_size_splits=2, value=_x, name='split_batch')
 
     with slim.arg_scope([slim.conv2d, slim.fully_connected], 
             weights_initializer=tf.contrib.layers.xavier_initializer(),
@@ -27,12 +27,12 @@ def build_model(params):
 
     def loss(y):
         y = tf.reshape(y, shape=[-1])
-        ylhs, yrhs = tf.split(0, 2, y, name='split_label')
+        ylhs, yrhs = tf.split(axis=0, num_or_size_splits=2, value=y, name='split_label')
         y = tf.equal(ylhs, yrhs)
         y = tf.to_float(y)
         return digits.constrastive_loss(lhs, rhs, y)
 
     return {
-        'model' : tf.concat(0, [lhs, rhs]),
+        'model' : tf.concat(axis=0, values=[lhs, rhs]),
         'loss' : loss,
         }
