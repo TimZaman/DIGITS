@@ -8,7 +8,7 @@ def build_model(params):
     
     x = tf.reshape(params['x'], shape=[-1, params['input_shape'][0], params['input_shape'][1], params['input_shape'][2]])
     
-    tf.image_summary(x.op.name, x, max_images=1, collections=[digits.GraphKeys.SUMMARIES_TRAIN])
+    tf.summary.image(x.op.name, x, max_images=1, collections=[digits.GraphKeys.SUMMARIES_TRAIN])
     x = tf.squeeze(x)
     
     
@@ -30,7 +30,7 @@ def build_model(params):
     # Reshaping to (n_steps*batch_size, n_input)
     x = tf.reshape(x, [-1, n_input])
     # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
-    x = tf.split(0, n_steps, x)
+    x = tf.split(axis=0, num_or_size_splits=n_steps, value=x)
 
     # Define a lstm cell with tensorflow
     lstm_cell = rnn_cell.BasicLSTMCell(n_hidden, forget_bias=1.0)
@@ -44,7 +44,7 @@ def build_model(params):
     def loss(y):
         loss = digits.classification_loss(model, y)
         accuracy = digits.classification_accuracy(model, y)
-        tf.scalar_summary(accuracy.op.name, accuracy, collections=[digits.GraphKeys.SUMMARIES_TRAIN])
+        tf.summary.scalar(accuracy.op.name, accuracy, collections=[digits.GraphKeys.SUMMARIES_TRAIN])
         return loss
 
     return {

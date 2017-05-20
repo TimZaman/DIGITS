@@ -3,7 +3,7 @@ def build_model(params):
     #tf.image_summary(_x.op.name, _x, max_images=10, collections=[digits.GraphKeys.SUMMARIES_TRAIN])
 
     # Split out the color channels
-    _, model_g, model_b = tf.split(3, 3, _x, name='split_channels')
+    _, model_g, model_b = tf.split(axis=3, num_or_size_splits=3, value=_x, name='split_channels')
     #tf.image_summary(model_g.op.name, model_g, max_images=10, collections=[digits.GraphKeys.SUMMARIES_TRAIN])
     #tf.image_summary(model_b.op.name, model_b, max_images=10, collections=[digits.GraphKeys.SUMMARIES_TRAIN])
 

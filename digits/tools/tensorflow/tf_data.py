@@ -314,7 +314,7 @@ class LoaderFactory(object):
             with tf.name_scope('mean_subtraction'):
                 single_data = self.mean_loader.subtract_mean_op(single_data)
                 if LOG_MEAN_FILE:
-                    self.summaries.append(tf.image_summary('mean_image', tf.expand_dims(self.mean_loader.tf_mean_image, 0), max_images=1))
+                    self.summaries.append(tf.summary.image('mean_image', tf.expand_dims(self.mean_loader.tf_mean_image, 0), max_images=1))
 
         # (Random) Cropping
         if self.croplen:
@@ -358,7 +358,7 @@ class LoaderFactory(object):
                 if aug_whitening:
                     # Subtract off its own mean and divide by the standard deviation of its own the pixels.
                     with tf.name_scope('whitening'):
-                        single_data = tf.image.per_image_whitening(single_data) # N.B. also converts to float  
+                        single_data = tf.image.per_image_standardization(single_data) # N.B. also converts to float  
         
         max_queue_capacity = min(math.ceil(self.total * MIN_FRACTION_OF_EXAMPLES_IN_QUEUE), MAX_ABSOLUTE_EXAMPLES_IN_QUEUE)
         
